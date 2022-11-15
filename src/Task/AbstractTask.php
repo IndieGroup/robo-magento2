@@ -27,7 +27,15 @@ abstract class AbstractTask extends BaseTask
 
     public function __construct($magentoBin = 'bin/magento')
     {
-        $phpbin = PHP_BINARY;
+        $configReader = new \Mwltr\MageDeploy2\Config\ConfigReader();
+        $config = $configReader->read(true);
+
+        // Magento commands need to be executed with the configured php_bin, not the one used for running robo.
+        $phpbin = $config->get('env/php_bin');
+        if (empty($phpbin)) {
+            $phpbin = PHP_BINARY;
+        }
+
         $this->command = "$phpbin $magentoBin";
     }
 
